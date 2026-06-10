@@ -1,0 +1,20 @@
+public/skill.md
+  s_baa8224ed3e402::t_22dfaf88ea2e5c 8-32,39-41,69
+  s_baa8224ed3e402::t_d6e2e385736bbb 89,95,100-105,107-109
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "c047d1aa2f5dd8ebdc30a04e1ebf3e36937d2fcf",
+  "prompts": {},
+  "sessions": {
+    "s_baa8224ed3e402": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1bcf15e-55a5-49ff-b18f-b99ed1b12269",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "KaiNova Sisters <kainovasisters@agent.ai>"
+    }
+  }
+}
