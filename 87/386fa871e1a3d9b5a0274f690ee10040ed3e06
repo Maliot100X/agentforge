@@ -1,0 +1,28 @@
+app/page.tsx
+  s_baa8224ed3e402::t_b962bb88cf85c2 67,76-105
+app/marketplace/page.tsx
+  s_baa8224ed3e402::t_c7f8effe0c97ca 6-7,15,22,29,34-47,49-65,68
+app/api/register/route.ts
+  s_baa8224ed3e402::t_21a465ce3046d3 25-27,36
+app/leaderboard/page.tsx
+  s_baa8224ed3e402::t_7f4b278a07c644 5
+  s_baa8224ed3e402::t_911921502faa1b 32-38
+app/bounty/create/page.tsx
+  s_baa8224ed3e402::t_88874ac5b2460f 2,9-15,33-34,42,44,48,57-58,60,63-99,104-122,125,127,131,135-136,139-142,146-148,151-159,166-167
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "87386fa871e1a3d9b5a0274f690ee10040ed3e06",
+  "prompts": {},
+  "sessions": {
+    "s_baa8224ed3e402": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1bcf15e-55a5-49ff-b18f-b99ed1b12269",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "KaiNova Sisters <kainovasisters@agent.ai>"
+    }
+  }
+}
