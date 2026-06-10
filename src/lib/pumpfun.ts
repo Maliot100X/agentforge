@@ -1,4 +1,6 @@
-import { PUMPFUN_API, HELIUS_RPC, HELIUS_API_KEY } from "./constants";
+import { Keypair, VersionedTransaction, Connection } from "@solana/web3.js";
+import bs58 from "bs58";
+import { HELIUS_RPC, PUMPFUN_API } from "./constants";
 
 export interface LaunchTokenParams {
   name: string;
@@ -8,7 +10,6 @@ export interface LaunchTokenParams {
   twitter?: string;
   telegram?: string;
   website?: string;
-  agentWallet: string;
 }
 
 export interface LaunchResult {
@@ -17,40 +18,55 @@ export interface LaunchResult {
   url: string;
 }
 
-export async function uploadImageToPumpfun(imageUrl: string): Promise<string> {
-  const imgRes = await fetch(imageUrl);
-  const blob = await imgRes.blob();
+function getPlatformKeypair(): Keypair {
+  const privateKeyB58 = process.env.PLATFORM_WALLET_PRIVATE;
+  if (!privateKeyB58) throw new Error("PLATFORM_WALLET_PRIVATE not set");
+  return Keypair.fromSecretKey(bs58.decode(privateKeyB58));
+}
+
+export async function uploadMetadataToPumpfun(
+  params: LaunchTokenParams & { imageBlob: Blob }
+): Promise<string> {
   const form = new FormData();
-  form.append("file", blob, "token.png");
-  const res = await fetch(`${PUMPFUN_API}/ipfs`, {
-    method: "POST",
-    body: form,
-  });
-  if (!res.ok) throw new Error(`IPFS upload failed: ${res.statusText}`);
+  form.append("file", params.imageBlob, "token.png");
+  form.append("name", params.name);
+  form.append("symbol", params.symbol);
+  form.append("description", params.description);
+  if (params.twitter) form.append("twitter", params.twitter);
+  if (params.telegram) form.append("telegram", params.telegram);
+  if (params.website) form.append("website", params.website);
+  form.append("showName", "true");
+
+  const res = await fetch(`${PUMPFUN_API}/ipfs`, { method: "POST", body: form });
+  if (!res.ok) throw new Error(`Metadata upload failed: ${res.status} ${await res.text()}`);
   const json = await res.json();
-  return json.metadataUri;
+  if (!json.metadataUri) throw new Error("No metadataUri in IPFS response");
+  return json.metadataUri as string;
 }
 
 export async function launchTokenOnPumpfun(params: LaunchTokenParams): Promise<LaunchResult> {
   const { name, symbol, description, imageUrl, twitter, telegram, website } = params;
 
-  const ipfsRes = await fetch(`${PUMPFUN_API}/ipfs`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, symbol, description, twitter, telegram, website, showName: true }),
+  // Fetch image blob
+  const imgRes = await fetch(imageUrl);
+  if (!imgRes.ok) throw new Error(`Failed to fetch image: ${imgRes.status}`);
+  const imageBlob = await imgRes.blob();
+
+  const metadataUri = await uploadMetadataToPumpfun({
+    name, symbol, description, imageUrl, twitter, telegram, website, imageBlob,
   });
-  if (!ipfsRes.ok) throw new Error(`Metadata upload failed: ${ipfsRes.statusText}`);
-  const { metadataUri } = await ipfsRes.json();
 
-  const mintKeypair = generateMintKeypair();
+  const platformKeypair = getPlatformKeypair();
+  const mintKeypair = Keypair.generate();
 
+  // Build launch transaction via pumpportal
   const launchRes = await fetch(`${PUMPFUN_API}/trade?api-key=public`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       action: "create",
       tokenMetadata: { name, symbol, uri: metadataUri },
-      mint: mintKeypair.publicKey,
+      mint: mintKeypair.publicKey.toBase58(),
       denominatedInSol: "true",
       amount: 0,
       slippage: 10,
@@ -59,36 +75,46 @@ export async function launchTokenOnPumpfun(params: LaunchTokenParams): Promise<L
     }),
   });
 
-  if (!launchRes.ok) throw new Error(`Launch failed: ${launchRes.statusText}`);
-  const tx = await launchRes.arrayBuffer();
+  if (!launchRes.ok) throw new Error(`Launch request failed: ${launchRes.status} ${await launchRes.text()}`);
 
+  const txBuffer = await launchRes.arrayBuffer();
+  if (txBuffer.byteLength === 0) throw new Error("Empty transaction buffer from pumpportal");
+
+  const tx = VersionedTransaction.deserialize(new Uint8Array(txBuffer));
+  tx.sign([platformKeypair, mintKeypair]);
+
+  const connection = new Connection(HELIUS_RPC, "confirmed");
+  const signature = await connection.sendTransaction(tx, {
+    maxRetries: 3,
+    skipPreflight: false,
+  });
+
+  await connection.confirmTransaction(signature, "confirmed");
+
+  const mint = mintKeypair.publicKey.toBase58();
   return {
-    mint: mintKeypair.publicKey,
-    signature: "pending",
-    url: `https://pump.fun/coin/${mintKeypair.publicKey}`,
+    mint,
+    signature,
+    url: `https://pump.fun/coin/${mint}`,
   };
 }
 
-function generateMintKeypair(): { publicKey: string } {
-  const chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
-  let result = "";
-  const bytes = new Uint8Array(32);
-  crypto.getRandomValues(bytes);
-  for (const b of bytes) result += chars[b % chars.length];
-  return { publicKey: result };
-}
-
 export async function getTokenData(mint: string) {
-  if (!HELIUS_API_KEY) return null;
-  const res = await fetch(
-    `https://api.helius.xyz/v0/token-metadata?api-key=${HELIUS_API_KEY}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ mintAccounts: [mint] }),
-    }
-  );
-  if (!res.ok) return null;
-  const json = await res.json();
-  return json[0] ?? null;
+  const heliusKey = process.env.HELIUS_API_KEY;
+  if (!heliusKey) return null;
+  try {
+    const res = await fetch(
+      `https://api.helius.xyz/v0/token-metadata?api-key=${heliusKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mintAccounts: [mint] }),
+      }
+    );
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json[0] ?? null;
+  } catch {
+    return null;
+  }
 }
