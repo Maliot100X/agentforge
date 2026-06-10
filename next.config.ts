@@ -6,9 +6,10 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "**" },
     ],
   },
+  allowedDevOrigins: ["212.86.105.35"],
   experimental: {
     serverActions: {
-      allowedOrigins: ["localhost:3000"],
+      allowedOrigins: ["localhost:3000", "212.86.105.35:3000"],
     },
   },
 };

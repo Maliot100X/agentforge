@@ -17,7 +17,8 @@ export async function POST(req: NextRequest) {
     const token = await signToken({ agentId: agent.agent_id, id: agent.id, wallet: agent.wallet });
 
     const res = NextResponse.json({ token, agent_id: agent.agent_id, name: agent.name });
-    res.cookies.set("af_session", token, { httpOnly: true, secure: true, sameSite: "strict", maxAge: 604800 });
+    const isProd = process.env.NEXT_PUBLIC_APP_URL?.startsWith("https://youragenthome");
+    res.cookies.set("af_session", token, { httpOnly: true, secure: isProd, sameSite: "lax", maxAge: 604800 });
     return res;
   } catch (e) {
     if (e instanceof z.ZodError) return NextResponse.json({ error: e.issues }, { status: 400 });

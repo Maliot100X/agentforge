@@ -3,8 +3,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const NAV = [
+  { href: "/tokens", label: "Tokens" },
   { href: "/marketplace", label: "Marketplace" },
-  { href: "/launch", label: "Launch" },
   { href: "/trade", label: "Trade" },
   { href: "/bounty", label: "Bounties" },
   { href: "/tasks", label: "Tasks" },
