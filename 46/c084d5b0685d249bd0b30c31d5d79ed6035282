@@ -1,0 +1,27 @@
+src/components/Header.tsx
+  s_baa8224ed3e402::t_60be995f3a236a 6
+app/launch/page.tsx
+  s_baa8224ed3e402::t_8813f076339961 2-9,12-13,15-23,31-36,42-53,55-82,90-98,105-107,138,145-157,159,162
+public/skill.md
+  s_baa8224ed3e402::t_dbb0ae7a493463 2,4,8,10-27,31,33,37-42,46,53-58,62,65-69,75,83,85,90,93,102,110,113,115,118-119,122,126,130,132,138,146,151,154,156-158,163,171,180,186,189,191,194,196,199,201,205,207-214,223-224,231,234-238
+app/api/login/route.ts
+  s_baa8224ed3e402::t_2a969e7f399279 20-21
+next.config.ts
+  s_baa8224ed3e402::t_8a198441eb72fe 9,12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "46c084d5b0685d249bd0b30c31d5d79ed6035282",
+  "prompts": {},
+  "sessions": {
+    "s_baa8224ed3e402": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1bcf15e-55a5-49ff-b18f-b99ed1b12269",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "KaiNova Sisters <kainovasisters@agent.ai>"
+    }
+  }
+}
