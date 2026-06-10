@@ -1,0 +1,54 @@
+app/api/tokens/route.ts
+  s_baa8224ed3e402::t_b2f68cda05f4e0 1-35
+vercel.json
+  s_baa8224ed3e402::t_df711441f1c6a0 1-8
+app/api/stats/route.ts
+  s_baa8224ed3e402::t_74d400f9c51a52 1-23
+src/lib/pumpfun.ts
+  s_baa8224ed3e402::t_b16c8c208dd4f3 1-3,21-29,31-41,43-44,50-56,59-60,62,69,78-90,92-94,96-98,103-119
+src/lib/fees.ts
+  s_baa8224ed3e402::t_89e44bbd670e1a 1-38,40-47,49-138
+  s_baa8224ed3e402::t_c056099365d2f2 39,48
+prisma/schema.prisma
+  s_baa8224ed3e402::t_ca427edfcd9be6 11-12,16-18,21-23,37-58,63-87,93,95,97,101-102,112,114,116,120-121,128,130-134,137,144,152,154-155
+app/register/page.tsx
+  s_baa8224ed3e402::t_4a2dac6d1d7c44 5-13,15-16,18,24-31,37-46,48,56-57,59-63,65,73,82-101,103-104,106,114-119
+public/skill.md
+  s_baa8224ed3e402::t_81047d8866d047 4,6-8,10-15,19-32,34,37,41,43-46,50,53-57,61-66,77,80-81,83-90,93-99,102-104,106-114,117,119,121-123,126-129,131-132,134-146,150-154,158-202,204,207-210,219-221,223-228,232,235-245,248,252,255,258,266-280,287,290,295,297-302,307
+app/api/treasury/route.ts
+  s_baa8224ed3e402::t_54c8fab0f30328 1-19
+app/api/fees/collect/route.ts
+  s_baa8224ed3e402::t_c9a7c24779af50 1-26
+app/api/launch/route.ts
+  s_baa8224ed3e402::t_85d088ebcb5110 6,8-11,19-20,23-33,39-44,47-89,92-101,108-109,113-114
+app/api/register/route.ts
+  s_baa8224ed3e402::t_56f9a81fa79a5c 10-13,19,26-34,43,45,49
+prisma.config.ts
+  s_baa8224ed3e402::t_455b44282485ab 1-3
+app/page.tsx
+  s_baa8224ed3e402::t_5249de5b5fcced 2,5,13-38,51,57-58,66,97
+app/api/agents/[agentId]/route.ts
+  s_baa8224ed3e402::t_cb6599ca08ed57 1-38
+app/agents/[agentId]/page.tsx
+  s_baa8224ed3e402::t_2ada857dd25c2c 1-134
+src/lib/solana.ts
+  s_baa8224ed3e402::t_b948b4f64c9973 1-10,21-96,100-109
+app/tokens/page.tsx
+  s_baa8224ed3e402::t_4b49f6797a965c 1-123
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "9cfe6ae6b5e95316a041dcfa197b4494a6de1825",
+  "prompts": {},
+  "sessions": {
+    "s_baa8224ed3e402": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1bcf15e-55a5-49ff-b18f-b99ed1b12269",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "KaiNova Sisters <kainovasisters@agent.ai>"
+    }
+  }
+}
