@@ -1,0 +1,123 @@
+app/bounty/create/page.tsx
+  s_baa8224ed3e402::t_0a4298c19c96a6 1-44
+app/api/dashboard/route.ts
+  s_baa8224ed3e402::t_b7efafd63682ac 1-32
+app/globals.css
+  s_baa8224ed3e402::t_58fb114619111c 4-14,18-19,24,27-55,57-90
+app/page.tsx
+  s_baa8224ed3e402::t_fc9b5d21873b17 1,3-19,21-42,44-69,71-79
+app/api/task/list/route.ts
+  s_baa8224ed3e402::t_648b26d3f7fec6 1-18
+app/trade/page.tsx
+  s_baa8224ed3e402::t_a3aabc563053ac 1-75
+app/developers/page.tsx
+  s_baa8224ed3e402::t_de1577a943dbe6 1-115
+app/api/launch/route.ts
+  s_baa8224ed3e402::t_92e5111b293867 1-40,42-45
+  s_baa8224ed3e402::t_a8abf6155c63a1 41
+app/login/page.tsx
+  s_baa8224ed3e402::t_871e85b7fcbc82 1-43
+app/tasks/create/page.tsx
+  s_baa8224ed3e402::t_ef2388226b0c03 1-41
+next.config.ts
+  s_baa8224ed3e402::t_48f08ad61166db 4-13
+app/api/trade/leaderboard/route.ts
+  s_baa8224ed3e402::t_95d2c9bf97654b 1-17
+prisma/schema.prisma
+  s_baa8224ed3e402::t_eef0777f71b038 6
+  s_baa8224ed3e402::t_45be2067141216 1,3-5,121
+  s_baa8224ed3e402::t_c64b72b4833ef5 2,7-120
+src/lib/solana.ts
+  s_baa8224ed3e402::t_667d12cbd58910 1-40
+app/api/task/claim/route.ts
+  s_baa8224ed3e402::t_de60b7874cd39b 1-24,26-28
+  s_baa8224ed3e402::t_a8abf6155c63a1 25
+app/docs/page.tsx
+  s_baa8224ed3e402::t_e5a4b2b0023cb4 1-173
+app/api/bounty/create/route.ts
+  s_baa8224ed3e402::t_a8abf6155c63a1 31
+  s_baa8224ed3e402::t_c8c1302caa1b1d 1-30,32-34
+src/components/StatBar.tsx
+  s_baa8224ed3e402::t_7c7e078ebdff67 1-23
+public/skill.md
+  s_baa8224ed3e402::t_01559a7e4d96cd 1-172
+app/dashboard/page.tsx
+  s_baa8224ed3e402::t_fe2f36eca2fcee 1-90
+app/api/task/submit/route.ts
+  s_baa8224ed3e402::t_a8abf6155c63a1 24
+  s_baa8224ed3e402::t_721a5446c5ab04 1-23,25-27
+app/marketplace/page.tsx
+  s_baa8224ed3e402::t_7f89473d1f752e 1-64
+app/api/bounty/submit/route.ts
+  s_baa8224ed3e402::t_a8abf6155c63a1 25
+  s_baa8224ed3e402::t_382f35f430ec9f 1-24,26-28
+app/register/page.tsx
+  s_baa8224ed3e402::t_36c70645f204f0 1-71
+.gitignore
+  s_baa8224ed3e402::t_45be2067141216 42-43
+src/lib/pumpfun.ts
+  s_baa8224ed3e402::t_55e3a57576c721 1-94
+src/lib/jupiter.ts
+  s_baa8224ed3e402::t_e46eea9e864875 1-44
+app/api/bounty/claim/route.ts
+  s_baa8224ed3e402::t_8ae73a78f47abc 1-24,26-28
+  s_baa8224ed3e402::t_a8abf6155c63a1 25
+app/api/trade/route.ts
+  s_baa8224ed3e402::t_5ac665b5526a86 1-34,36-39
+  s_baa8224ed3e402::t_a8abf6155c63a1 35
+app/api/leaderboard/route.ts
+  s_baa8224ed3e402::t_3738e8235bf659 1-18
+app/api/login/route.ts
+  s_baa8224ed3e402::t_8a289c443939e5 1-22,24-26
+  s_baa8224ed3e402::t_6ae132d58ad7c4 23
+src/lib/auth.ts
+  s_baa8224ed3e402::t_488e0ba6c46fac 1-53
+package.json
+  s_baa8224ed3e402::t_0bf05314bc6c03 25,30
+  s_baa8224ed3e402::t_509d12443d4ebc 33-40
+src/components/Header.tsx
+  s_baa8224ed3e402::t_6062d76d9ae018 1-41
+app/api/register/route.ts
+  s_baa8224ed3e402::t_6ae132d58ad7c4 37
+  s_baa8224ed3e402::t_0a1d41c27f4681 1-36,38-41
+app/api/bounty/list/route.ts
+  s_baa8224ed3e402::t_feb9c7a3814d9d 1-18
+app/layout.tsx
+  s_baa8224ed3e402::t_9f7e1cec74b05f 4-5,7-8,11-13,16,18-23
+app/launch/page.tsx
+  s_baa8224ed3e402::t_7f9f13fa07c7eb 1-90
+app/bounty/page.tsx
+  s_baa8224ed3e402::t_172ff40e92401d 1-64
+app/tasks/page.tsx
+  s_baa8224ed3e402::t_bad5891bc10ed8 1-52
+prisma.config.ts
+  s_baa8224ed3e402::t_45be2067141216 1-9,11-12
+  s_baa8224ed3e402::t_67e78da238ef1a 10
+app/leaderboard/page.tsx
+  s_baa8224ed3e402::t_0e4c19be35125e 1-57
+src/lib/constants.ts
+  s_baa8224ed3e402::t_9dbec5c88f5f8e 1-12
+tsconfig.json
+  s_baa8224ed3e402::t_7b9f9ea38240ab 22
+app/api/task/create/route.ts
+  s_baa8224ed3e402::t_b4f8ede3dc8a8e 1-30,32-34
+  s_baa8224ed3e402::t_a8abf6155c63a1 31
+src/lib/db.ts
+  s_baa8224ed3e402::t_d8e3f2094607c7 1-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "d5f251679974d4f66c81f247c8e92073888d800d",
+  "prompts": {},
+  "sessions": {
+    "s_baa8224ed3e402": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1bcf15e-55a5-49ff-b18f-b99ed1b12269",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "KaiNova Sisters <kainovasisters@agent.ai>"
+    }
+  }
+}
