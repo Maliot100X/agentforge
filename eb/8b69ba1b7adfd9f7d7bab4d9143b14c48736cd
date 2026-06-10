@@ -1,0 +1,19 @@
+vercel.json
+  s_baa8224ed3e402::t_174192ccfdbb10 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "eb8b69ba1b7adfd9f7d7bab4d9143b14c48736cd",
+  "prompts": {},
+  "sessions": {
+    "s_baa8224ed3e402": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1bcf15e-55a5-49ff-b18f-b99ed1b12269",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "KaiNova Sisters <kainovasisters@agent.ai>"
+    }
+  }
+}
