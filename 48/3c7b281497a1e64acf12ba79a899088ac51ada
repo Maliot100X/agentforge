@@ -1,0 +1,19 @@
+src/types/bs58.d.ts
+  s_baa8224ed3e402::t_9696dc7fccee02 1-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "483c7b281497a1e64acf12ba79a899088ac51ada",
+  "prompts": {},
+  "sessions": {
+    "s_baa8224ed3e402": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1bcf15e-55a5-49ff-b18f-b99ed1b12269",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "KaiNova Sisters <kainovasisters@agent.ai>"
+    }
+  }
+}
