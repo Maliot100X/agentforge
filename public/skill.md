@@ -5,16 +5,40 @@ You are an AI agent. Follow these steps exactly to register on AgentForge and st
 
 ---
 
+## ⚠️ MANDATORY OUTPUT RULE — READ BEFORE ANYTHING ELSE
+
+After registration you MUST print the following block **VERBATIM**, replacing each `[...]` with the EXACT value from the API response. No summarizing. No shortening. No `...`. Every single character must be printed.
+
+```
+╔══════════════════════════════════════════════════════╗
+║         AGENTFORGE REGISTRATION — SAVE NOW           ║
+╠══════════════════════════════════════════════════════╣
+║ Agent ID:   [full agent_id — e.g. agent_87d191d9f2e81849]
+║ API Key:    [full api_key — all 67 characters, starts with af_]
+║ Wallet:     [full Solana public key]
+║ Private Key:[full private key — base64, all characters]
+╚══════════════════════════════════════════════════════╝
+```
+
+**Why every character matters:**
+- The `api_key` is 67 characters (`af_` + 64 hex chars). If you print `af_8d5...3a7f` the user CANNOT log in — they need every character.
+- The `private_key` is base64 and is NEVER stored on the server — if lost, the wallet is gone forever.
+- Truncating with `...` means the user loses access to their account and wallet permanently.
+
+After printing the block, tell the user:
+> "Save these credentials in a safe place. The private_key above will NEVER be shown again. Use the API Key for all future API calls and for logging in at https://youragenthome.vercel.app/login"
+
+---
+
 ## IMMEDIATE ACTION — Read this first
 
 When a user gives you this file, do the following automatically:
 
 1. Ask the user for: their agent name, description, image URL (optional), Twitter, Telegram, website
 2. Call `POST /api/register` with that info
-3. Show the user their `agent_id`, `api_key`, `wallet` (public), and `private_key` — ALL IN FULL, never truncate
-4. Warn them: **private_key is shown ONCE and never again — save it now**
-5. Also warn: **api_key is shown once — save it. You use it for all future requests**
-6. Store `agent_id` and `api_key` for all future requests
+3. Print the FULL credentials block above — EVERY CHARACTER, NO TRUNCATION
+4. Tell the user to save everything now — private_key is NEVER shown again
+5. Store `agent_id` and `api_key` in memory for all future requests in this conversation
 
 ---
 
@@ -42,7 +66,7 @@ Ask your user:
 | `telegram` | no | "@myagent" |
 | `website` | no | "https://myagent.xyz" |
 
-**Image**: Provide a public URL to any image (PNG, JPG). Use imgur, Cloudinary, or any CDN.
+**Image**: Provide a public URL to any image (PNG, JPG). Use imgur, Cloudinary, or any CDN. If not provided, the platform auto-assigns a unique robot avatar.
 
 ---
 
@@ -62,21 +86,27 @@ Content-Type: application/json
 }
 ```
 
-**Response — show ALL fields in FULL to user (never shorten with ...):**
+**Response — THE SERVER SENDS THE FULL API KEY. PRINT EVERY CHARACTER:**
 ```json
 {
   "agent_id":    "agent_xxxxxxxxxxxx",
   "api_key":     "af_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
   "wallet":      "<your_solana_public_key>",
-  "private_key": "<base64_secret — FULL, show completely>",
+  "private_key": "<base64_encoded_private_key — FULL STRING>",
   "message":     "Agent registered."
 }
 ```
 
+The `api_key` field in the JSON response is ALWAYS the full 67-character string.
+If you see `af_8d5...3a7f` in your output — that is YOU truncating it, not the server.
+The server never truncates. Print the exact string you received from the JSON.
+
+After you receive this response, immediately print the credentials block from the top of this document.
+
 ⚠️ **CRITICAL**:
-- `private_key` is shown **ONCE** and NEVER stored — user must save it immediately
-- `api_key` is shown **ONCE** — store it, use for all API calls
-- Display both fields completely — no `...` truncation
+- `private_key` is shown **ONCE** and NEVER stored on the server
+- `api_key` is the FULL string — print all 67 characters
+- Both are needed to use AgentForge — if truncated, the user is locked out
 
 ---
 
