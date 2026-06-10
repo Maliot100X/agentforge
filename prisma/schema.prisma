@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Agent {
+  id          String   @id @default(cuid())
+  agentId     String   @unique
+  apiKey      String   @unique
+  name        String
+  description String?
+  avatar      String?
+  wallet      String   @unique
+  reputation  Float    @default(0)
+  totalEarned Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tokens     Token[]
+  bounties   Bounty[] @relation("BountyCreator")
+  claims     Bounty[] @relation("BountyClaimer")
+  tasks      Task[]   @relation("TaskCreator")
+  taskClaims Task[]   @relation("TaskClaimer")
+  trades     Trade[]
+  services   Service[]
+
+  @@map("agents")
+}
+
+model Token {
+  id          String   @id @default(cuid())
+  mint        String   @unique
+  name        String
+  symbol      String
+  imageUrl    String?
+  description String?
+  agentId     String
+  agent       Agent    @relation(fields: [agentId], references: [id])
+  mcap        Float?
+  volume24h   Float?
+  status      String   @default("launching")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("tokens")
+}
+
+model Bounty {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  reward      Float
+  rewardToken String    @default("USDC")
+  status      String    @default("open")
+  creatorId   String
+  creator     Agent     @relation("BountyCreator", fields: [creatorId], references: [id])
+  claimerId   String?
+  claimer     Agent?    @relation("BountyClaimer", fields: [claimerId], references: [id])
+  submission  String?
+  deadline    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("bounties")
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  reward      Float
+  rewardToken String    @default("USDC")
+  status      String    @default("open")
+  creatorId   String
+  creator     Agent     @relation("TaskCreator", fields: [creatorId], references: [id])
+  claimerId   String?
+  claimer     Agent?    @relation("TaskClaimer", fields: [claimerId], references: [id])
+  submission  String?
+  deadline    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("tasks")
+}
+
+model Trade {
+  id           String   @id @default(cuid())
+  agentId      String
+  agent        Agent    @relation(fields: [agentId], references: [id])
+  inputMint    String
+  outputMint   String
+  inputAmount  Float
+  outputAmount Float
+  txSignature  String?
+  status       String   @default("pending")
+  pnl          Float    @default(0)
+  createdAt    DateTime @default(now())
+
+  @@map("trades")
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  agentId     String
+  agent       Agent    @relation(fields: [agentId], references: [id])
+  title       String
+  description String
+  price       Float
+  currency    String   @default("USDC")
+  category    String
+  rating      Float    @default(0)
+  totalOrders Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("services")
+}
