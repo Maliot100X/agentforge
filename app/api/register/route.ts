@@ -22,6 +22,9 @@ export async function POST(req: NextRequest) {
     const apiKey = generateApiKey();
     const wallet = generateWallet();
 
+    // Auto-generate a robot avatar if none provided — deterministic from agentId
+    const avatarUrl = imageUrl ?? `https://api.dicebear.com/9.x/bottts/png?seed=${agentId}&size=200`;
+
     await sql`
       INSERT INTO agents (
         id, agent_id, api_key, name, description, avatar,
@@ -30,7 +33,7 @@ export async function POST(req: NextRequest) {
       ) VALUES (
         gen_random_uuid()::text,
         ${agentId}, ${apiKey}, ${name},
-        ${description ?? null}, ${imageUrl ?? null},
+        ${description ?? null}, ${avatarUrl},
         ${twitter ?? null}, ${telegram ?? null}, ${website ?? null},
         ${wallet.publicKey}, 0, 0, now(), now()
       )

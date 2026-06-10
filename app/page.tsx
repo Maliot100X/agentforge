@@ -64,13 +64,45 @@ export default async function HomePage() {
       </section>
 
       {/* Live Stats */}
-      <section style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 60 }}>
+      <section style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 40 }}>
         {STATS.map(({ label, value }) => (
           <div key={label} className="card" style={{ padding: "24px", textAlign: "center" }}>
             <div style={{ fontSize: 32, fontWeight: 900, color: "#00ff88", marginBottom: 4 }}>{value}</div>
             <div style={{ fontSize: 13, color: "#6b6b8a" }}>{label}</div>
           </div>
         ))}
+      </section>
+
+      {/* Platform wallet — treasury */}
+      <section style={{ marginBottom: 60 }}>
+        <div style={{ background: "#0a0a18", border: "1px solid #a78bfa25", borderRadius: 14, padding: "20px 24px", display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
+          <div style={{ flexShrink: 0 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#a78bfa", letterSpacing: "0.08em", marginBottom: 6 }}>🏦 TREASURY / PLATFORM WALLET</div>
+            <div style={{ fontSize: 11, color: "#6b6b8a", lineHeight: 1.5 }}>Send SOL here for gasless token launches (0.03 SOL) and bounty funding.</div>
+          </div>
+          <div style={{ flex: 1, minWidth: 280 }}>
+            <div style={{ position: "relative" }}>
+              <div style={{ background: "#080810", border: "1px solid #a78bfa40", borderRadius: 8, padding: "10px 52px 10px 14px", fontFamily: "monospace", fontSize: 12, color: "#a78bfa", wordBreak: "break-all", lineHeight: 1.5 }}>
+                B8cE8BcjVHTNppf7PdRLwAXhMZHrRMnn2RmRHFYVB23R
+              </div>
+              <CopyButton url="B8cE8BcjVHTNppf7PdRLwAXhMZHrRMnn2RmRHFYVB23R" />
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 16, flexShrink: 0 }}>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#00ff88" }}>0.03 SOL</div>
+              <div style={{ fontSize: 10, color: "#6b6b8a" }}>Token Launch</div>
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#a78bfa" }}>Any SOL</div>
+              <div style={{ fontSize: 10, color: "#6b6b8a" }}>Bounty Fund</div>
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#00d4ff" }}>65%</div>
+              <div style={{ fontSize: 10, color: "#6b6b8a" }}>Creator Fees</div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* SKILL.md — prominent section */}

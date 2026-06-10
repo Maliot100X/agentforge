@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-interface Leader { agent_id: string; name: string; total_earned: number; reputation: number; token_count: number; trade_count: number; total_pnl: number; }
+interface Leader { agent_id: string; name: string; avatar?: string; total_earned: number; reputation: number; token_count: number; trade_count: number; total_pnl: number; }
 
 export default function LeaderboardPage() {
   const [leaders, setLeaders] = useState<Leader[]>([]);
@@ -29,9 +29,13 @@ export default function LeaderboardPage() {
               <div style={{ width: 32, textAlign: "center", fontSize: i < 3 ? 22 : 14, color: "#6b6b8a", fontWeight: 700, flexShrink: 0 }}>
                 {i < 3 ? medals[i] : `#${i + 1}`}
               </div>
-              <div style={{ width: 36, height: 36, borderRadius: 8, background: "linear-gradient(135deg, #00ff88, #00d4ff)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, color: "#000", fontSize: 14, flexShrink: 0 }}>
-                {agent.name?.[0]?.toUpperCase()}
-              </div>
+              {agent.avatar ? (
+                <img src={agent.avatar} alt={agent.name} style={{ width: 36, height: 36, borderRadius: 8, objectFit: "cover" }} />
+              ) : (
+                <div style={{ width: 36, height: 36, borderRadius: 8, background: "linear-gradient(135deg, #00ff88, #00d4ff)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, color: "#000", fontSize: 14, flexShrink: 0 }}>
+                  {agent.name?.[0]?.toUpperCase()}
+                </div>
+              )}
               <div style={{ flex: 1 }}>
                 <Link href={`/agents/${agent.agent_id}`} style={{ fontWeight: 700, fontSize: 14, color: "#e8e8f0", textDecoration: "none" }}>{agent.name}</Link>
                 <div style={{ fontSize: 11, color: "#3a3a5a", fontFamily: "monospace" }}>{agent.agent_id}</div>

@@ -1,23 +1,21 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 const PLATFORM_WALLET = "B8cE8BcjVHTNppf7PdRLwAXhMZHrRMnn2RmRHFYVB23R";
 
 export default function CreateBountyPage() {
-  const [form, setForm] = useState({ title: "", description: "", rewardSol: "", deadline: "", depositTx: "" });
+  const [rewardSol, setRewardSol] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [form, setForm] = useState({ title: "", description: "", deadline: "", depositTx: "" });
+  const [apiKey, setApiKey] = useState(() => {
+    if (typeof window !== "undefined") return localStorage.getItem("af_api_key") ?? "";
+    return "";
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [copied, setCopied] = useState(false);
-  const [apiKey, setApiKey] = useState("");
   const router = useRouter();
-
-  // Load stored api key from localStorage if available
-  useEffect(() => {
-    const stored = localStorage.getItem("af_api_key") ?? "";
-    setApiKey(stored);
-  }, []);
 
   function set(k: string) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setForm(f => ({ ...f, [k]: e.target.value }));
@@ -32,7 +30,8 @@ export default function CreateBountyPage() {
     setLoading(true); setError("");
     try {
       const headers: Record<string, string> = { "Content-Type": "application/json" };
-      if (apiKey) headers["Authorization"] = `Bearer ${apiKey}`;
+      const key = apiKey.trim();
+      if (key) { headers["Authorization"] = `Bearer ${key}`; localStorage.setItem("af_api_key", key); }
 
       const res = await fetch("/api/bounty/create", {
         method: "POST",
@@ -40,13 +39,13 @@ export default function CreateBountyPage() {
         body: JSON.stringify({
           title: form.title,
           description: form.description,
-          rewardSol: Number(form.rewardSol),
+          rewardSol: Number(rewardSol),
           deadline: new Date(form.deadline).toISOString(),
-          depositTx: form.depositTx,
+          depositTx: form.depositTx.trim(),
         }),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.error ?? "Failed to create bounty"); return; }
+      if (!res.ok) { setError(data.error ?? JSON.stringify(data)); return; }
       router.push("/bounty");
     } catch (err) {
       setError(String(err));
@@ -55,72 +54,108 @@ export default function CreateBountyPage() {
     }
   }
 
+  const hasReward = Number(rewardSol) > 0;
+
   return (
-    <div style={{ maxWidth: 620, margin: "0 auto", padding: "40px 24px" }}>
+    <div style={{ maxWidth: 640, margin: "0 auto", padding: "40px 24px" }}>
       <Link href="/bounty" style={{ fontSize: 13, color: "#6b6b8a", textDecoration: "none", marginBottom: 20, display: "inline-block" }}>← Back to Bounties</Link>
       <h1 style={{ fontSize: 26, fontWeight: 900, color: "#e8e8f0", marginBottom: 6 }}>Post a Bounty</h1>
-      <p style={{ color: "#6b6b8a", fontSize: 13, marginBottom: 28 }}>Fund it upfront in SOL. Held in treasury. Paid to winner instantly when you pick one.</p>
+      <p style={{ color: "#6b6b8a", fontSize: 13, marginBottom: 32 }}>SOL is locked in the treasury. Paid to the winner instantly.</p>
 
-      {/* Step 1: Send SOL first */}
-      <div style={{ background: "#0e0e1a", border: "1px solid #a78bfa30", borderRadius: 12, padding: 20, marginBottom: 24 }}>
-        <div style={{ fontSize: 11, fontWeight: 700, color: "#a78bfa", letterSpacing: "0.08em", marginBottom: 12 }}>STEP 1 — FUND THE BOUNTY FIRST</div>
-        <p style={{ fontSize: 13, color: "#6b6b8a", marginBottom: 12, lineHeight: 1.6 }}>
-          Send the exact SOL amount you want to reward to the platform wallet. Then paste the transaction signature below.
-        </p>
-        <div style={{ fontSize: 11, fontWeight: 600, color: "#6b6b8a", marginBottom: 6 }}>PLATFORM WALLET</div>
-        <div style={{ position: "relative" }}>
-          <div style={{ background: "#080810", border: "1px solid #a78bfa30", borderRadius: 8, padding: "10px 50px 10px 14px", fontFamily: "monospace", fontSize: 11, color: "#a78bfa", wordBreak: "break-all" }}>
-            {PLATFORM_WALLET}
-          </div>
-          <button onClick={copyWallet} style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", background: "#a78bfa20", border: "1px solid #a78bfa40", color: "#a78bfa", borderRadius: 5, padding: "3px 8px", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
-            {copied ? "✓" : "Copy"}
-          </button>
+      {/* ── STEP 1 ── */}
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+          <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#00ff88", color: "#000", fontWeight: 900, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>1</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: "#e8e8f0" }}>Enter reward amount</div>
         </div>
-        <p style={{ fontSize: 11, color: "#3a3a5a", marginTop: 10 }}>
-          Use any Solana wallet (Phantom, Backpack, CLI). Save the transaction signature — you'll need it below.
-        </p>
+        <div style={{ marginLeft: 38 }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: "#6b6b8a", display: "block", marginBottom: 5 }}>REWARD IN SOL *</label>
+          <input
+            className="input" type="number" placeholder="0.5" min="0.001" step="0.001"
+            value={rewardSol} onChange={e => setRewardSol(e.target.value)}
+            style={{ fontSize: 20, fontWeight: 800, color: "#00ff88", maxWidth: 200 }}
+          />
+          {hasReward && <div style={{ marginTop: 6, fontSize: 12, color: "#6b6b8a" }}>You will send exactly <strong style={{ color: "#00ff88" }}>{rewardSol} SOL</strong> to the platform wallet.</div>}
+        </div>
       </div>
 
-      {/* Auth: API key */}
-      <div style={{ background: "#0e0e1a", border: "1px solid #1e1e3a", borderRadius: 10, padding: 16, marginBottom: 20 }}>
-        <div style={{ fontSize: 11, fontWeight: 700, color: "#6b6b8a", marginBottom: 6 }}>YOUR API KEY (from registration)</div>
-        <input
-          className="input" placeholder="af_..."
-          value={apiKey} onChange={e => { setApiKey(e.target.value); localStorage.setItem("af_api_key", e.target.value); }}
-        />
-        <p style={{ fontSize: 11, color: "#3a3a5a", marginTop: 6 }}>Required to post bounties. <Link href="/login" style={{ color: "#00ff88" }}>Login here</Link> or paste your api_key directly.</p>
+      {/* ── STEP 2 ── */}
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+          <div style={{ width: 28, height: 28, borderRadius: "50%", background: hasReward ? "#00ff88" : "#1e1e3a", color: hasReward ? "#000" : "#6b6b8a", fontWeight: 900, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>2</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: hasReward ? "#e8e8f0" : "#3a3a5a" }}>Send {hasReward ? <span style={{ color: "#00ff88" }}>{rewardSol} SOL</span> : "the SOL"} to the platform wallet</div>
+        </div>
+        <div style={{ marginLeft: 38 }}>
+          <div style={{ background: "#0e0e1a", border: "1px solid #a78bfa30", borderRadius: 10, padding: 16 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#a78bfa", marginBottom: 8 }}>PLATFORM WALLET — send SOL here</div>
+            <div style={{ position: "relative" }}>
+              <div style={{ background: "#080810", border: "1px solid #a78bfa40", borderRadius: 8, padding: "12px 52px 12px 14px", fontFamily: "monospace", fontSize: 12, color: "#a78bfa", wordBreak: "break-all", lineHeight: 1.5 }}>
+                {PLATFORM_WALLET}
+              </div>
+              <button onClick={copyWallet} type="button" style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", background: "#a78bfa30", border: "1px solid #a78bfa50", color: "#a78bfa", borderRadius: 6, padding: "4px 10px", fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
+                {copied ? "✓ Copied" : "Copy"}
+              </button>
+            </div>
+            <p style={{ fontSize: 11, color: "#3a3a5a", marginTop: 10 }}>Use Phantom, Backpack, Solflare, or any Solana wallet. After sending, copy the transaction signature.</p>
+          </div>
+        </div>
       </div>
 
-      {/* Step 2: Fill out the form */}
+      {/* ── STEP 3 ── */}
+      <div style={{ marginBottom: 28 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+          <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#00d4ff", color: "#000", fontWeight: 900, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>3</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: "#e8e8f0" }}>Paste the transaction signature</div>
+        </div>
+        <div style={{ marginLeft: 38 }}>
+          <div style={{ background: "#00d4ff08", border: "2px solid #00d4ff40", borderRadius: 10, padding: 16 }}>
+            <label style={{ fontSize: 11, fontWeight: 700, color: "#00d4ff", display: "block", marginBottom: 8 }}>TRANSACTION SIGNATURE *</label>
+            <input
+              className="input"
+              placeholder="Paste the Solana tx signature here (e.g. 5xAB3...)"
+              value={form.depositTx}
+              onChange={set("depositTx")}
+              style={{ fontFamily: "monospace", fontSize: 12, borderColor: form.depositTx ? "#00d4ff60" : undefined }}
+            />
+            <p style={{ fontSize: 11, color: "#3a3a5a", marginTop: 6 }}>In Phantom: go to Activity → click the transaction → copy the signature. In Explorer/Solscan: copy from the URL.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* ── FORM ── */}
       <form onSubmit={submit} className="card" style={{ padding: 24, display: "flex", flexDirection: "column", gap: 16 }}>
-        <div style={{ fontSize: 11, fontWeight: 700, color: "#00ff88", letterSpacing: "0.08em", marginBottom: -4 }}>STEP 2 — BOUNTY DETAILS</div>
+        <div style={{ fontSize: 11, fontWeight: 700, color: "#00ff88", letterSpacing: "0.08em", marginBottom: -4 }}>BOUNTY DETAILS</div>
 
         <div>
           <label style={{ fontSize: 11, fontWeight: 600, color: "#6b6b8a", display: "block", marginBottom: 5 }}>TITLE *</label>
-          <input className="input" placeholder="Build a Solana trading strategy" value={form.title} onChange={set("title")} required />
+          <input className="input" placeholder="Build a Solana trading strategy..." value={form.title} onChange={set("title")} required />
         </div>
 
         <div>
-          <label style={{ fontSize: 11, fontWeight: 600, color: "#6b6b8a", display: "block", marginBottom: 5 }}>DESCRIPTION *</label>
-          <textarea className="input" placeholder="Detailed requirements, expected deliverable, acceptance criteria..." value={form.description} onChange={set("description")} rows={5} required style={{ resize: "vertical" }} />
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-          <div>
-            <label style={{ fontSize: 11, fontWeight: 600, color: "#6b6b8a", display: "block", marginBottom: 5 }}>REWARD (SOL) *</label>
-            <input className="input" type="number" placeholder="0.5" min="0.001" step="0.001" value={form.rewardSol} onChange={set("rewardSol")} required />
-          </div>
-          <div>
-            <label style={{ fontSize: 11, fontWeight: 600, color: "#6b6b8a", display: "block", marginBottom: 5 }}>DEADLINE *</label>
-            <input className="input" type="datetime-local" value={form.deadline} onChange={set("deadline")} required />
-          </div>
+          <label style={{ fontSize: 11, fontWeight: 600, color: "#6b6b8a", display: "block", marginBottom: 5 }}>DESCRIPTION & REQUIREMENTS *</label>
+          <textarea className="input" placeholder="What exactly do you need? What counts as a successful submission? Be specific." value={form.description} onChange={set("description")} rows={5} required style={{ resize: "vertical" }} />
         </div>
 
         <div>
-          <label style={{ fontSize: 11, fontWeight: 600, color: "#6b6b8a", display: "block", marginBottom: 5 }}>DEPOSIT TX SIGNATURE *</label>
-          <input className="input" placeholder="Paste your Solana transaction signature here" value={form.depositTx} onChange={set("depositTx")} required />
-          <p style={{ fontSize: 11, color: "#3a3a5a", marginTop: 4 }}>Must be a transaction sending exactly {form.rewardSol || "your reward"} SOL to the platform wallet above.</p>
+          <label style={{ fontSize: 11, fontWeight: 600, color: "#6b6b8a", display: "block", marginBottom: 5 }}>DEADLINE *</label>
+          <input className="input" type="datetime-local" value={form.deadline} onChange={set("deadline")} required />
+          <p style={{ fontSize: 11, color: "#3a3a5a", marginTop: 4 }}>If you don't pick a winner before this, a random submitter is automatically paid.</p>
         </div>
+
+        <div>
+          <label style={{ fontSize: 11, fontWeight: 600, color: "#6b6b8a", display: "block", marginBottom: 5 }}>YOUR API KEY *</label>
+          <input className="input" placeholder="af_..." value={apiKey} onChange={e => setApiKey(e.target.value)} />
+          <p style={{ fontSize: 11, color: "#3a3a5a", marginTop: 4 }}>From registration. <Link href="/login" style={{ color: "#00ff88" }}>Login here</Link> to get your API key.</p>
+        </div>
+
+        {/* Summary before submit */}
+        {hasReward && form.depositTx && (
+          <div style={{ background: "#00ff8808", border: "1px solid #00ff8820", borderRadius: 8, padding: 12, fontSize: 12, color: "#6b6b8a", lineHeight: 1.7 }}>
+            ✅ Reward: <strong style={{ color: "#00ff88" }}>{rewardSol} SOL</strong><br />
+            ✅ Deposit TX: <span style={{ fontFamily: "monospace", color: "#00d4ff" }}>{form.depositTx.slice(0, 20)}...</span><br />
+            Platform will verify this transaction on-chain before creating the bounty.
+          </div>
+        )}
 
         {error && (
           <div style={{ background: "#ff446615", border: "1px solid #ff446640", borderRadius: 8, padding: 12, fontSize: 13, color: "#ff8899" }}>
@@ -128,8 +163,8 @@ export default function CreateBountyPage() {
           </div>
         )}
 
-        <button type="submit" className="btn-primary" disabled={loading} style={{ fontSize: 15, padding: "12px 0" }}>
-          {loading ? "Verifying deposit & posting..." : "🏆 Post Bounty"}
+        <button type="submit" className="btn-primary" disabled={loading || !form.depositTx || !hasReward} style={{ fontSize: 15, padding: "13px 0" }}>
+          {loading ? "Verifying deposit on-chain..." : `🏆 Post Bounty — ${rewardSol || "0"} SOL`}
         </button>
       </form>
     </div>
