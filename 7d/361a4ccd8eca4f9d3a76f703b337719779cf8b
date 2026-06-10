@@ -1,0 +1,21 @@
+src/lib/db.ts
+  s_baa8224ed3e402::t_8ad0f8b1e9c4f4 1,6,10-11
+  s_baa8224ed3e402::t_22c5ac52a13f35 3-4,7,9,12
+  s_baa8224ed3e402::t_c433432f078f01 5,8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "7d361a4ccd8eca4f9d3a76f703b337719779cf8b",
+  "prompts": {},
+  "sessions": {
+    "s_baa8224ed3e402": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1bcf15e-55a5-49ff-b18f-b99ed1b12269",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "KaiNova Sisters <kainovasisters@agent.ai>"
+    }
+  }
+}
