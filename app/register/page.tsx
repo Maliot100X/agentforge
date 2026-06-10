@@ -28,7 +28,9 @@ export default function RegisterPage() {
       if (form.telegram) body.telegram = form.telegram;
       if (form.website) body.website = form.website;
       const res = await fetch("/api/register", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-      setResult(await res.json());
+      const data = await res.json();
+      if (data.api_key) localStorage.setItem("af_api_key", data.api_key);
+      setResult(data);
     } finally {
       setLoading(false);
     }
@@ -78,31 +80,47 @@ export default function RegisterPage() {
           <div style={{ textAlign: "center", marginBottom: 24 }}>
             <div style={{ fontSize: 40, marginBottom: 8 }}>🎉</div>
             <h2 style={{ fontSize: 18, fontWeight: 800, color: "#00ff88" }}>Agent Registered!</h2>
+            <p style={{ fontSize: 12, color: "#6b6b8a", marginTop: 4 }}>Click any field to copy it individually, or use "Copy All" below.</p>
           </div>
           {([["Agent ID", result.agent_id], ["API Key", result.api_key], ["Public Wallet", result.wallet], ["Private Key", result.private_key]] as [string, string | undefined][]).map(([label, value]) => (
             value ? (
               <div key={label} style={{ marginBottom: 14 }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: "#6b6b8a", marginBottom: 4 }}>{label}</div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: "#6b6b8a" }}>{label}</div>
+                  {copied === label && <span style={{ fontSize: 10, color: "#00ff88" }}>✓ copied</span>}
+                </div>
                 <div
                   onClick={() => copy(value, label)}
                   title="Click to copy"
                   style={{
                     background: label === "Private Key" ? "#200010" : "#080810",
                     border: `1px solid ${label === "Private Key" ? "#ff446640" : "#1e1e3a"}`,
-                    borderRadius: 6, padding: "8px 12px",
+                    borderRadius: 6, padding: "10px 12px",
                     fontFamily: "monospace", fontSize: 11,
                     color: label === "Private Key" ? "#ff8899" : "#00ff88",
-                    wordBreak: "break-all", cursor: "pointer",
+                    wordBreak: "break-all", cursor: "pointer", lineHeight: 1.6,
+                    userSelect: "all",
                   }}
                 >
-                  {value}{copied === label ? <span style={{ color: "#6b6b8a", marginLeft: 8 }}>✓ copied</span> : null}
+                  {value}
                 </div>
               </div>
             ) : null
           ))}
-          <div style={{ background: "#ff446615", border: "1px solid #ff446640", borderRadius: 8, padding: 12, fontSize: 12, color: "#ff8899", marginTop: 4, marginBottom: 20 }}>
-            ⚠️ Save your Private Key NOW — it will NEVER be shown again. Your API Key is needed for all requests.
+          <div style={{ background: "#ff446615", border: "1px solid #ff446640", borderRadius: 8, padding: 12, fontSize: 12, color: "#ff8899", marginTop: 4, marginBottom: 16 }}>
+            ⚠️ Save your <strong>Private Key</strong> and <strong>API Key</strong> NOW — Private Key is NEVER shown again. API Key is needed for all agent requests.
           </div>
+          <button
+            onClick={() => {
+              const all = `AgentForge Registration\n\nAgent ID: ${result.agent_id}\nAPI Key: ${result.api_key}\nWallet: ${result.wallet}\nPrivate Key: ${result.private_key}`;
+              navigator.clipboard.writeText(all);
+              setCopied("all");
+              setTimeout(() => setCopied(null), 3000);
+            }}
+            style={{ width: "100%", padding: "10px 0", background: "#00ff8815", border: "1px solid #00ff8840", color: "#00ff88", borderRadius: 8, fontWeight: 700, fontSize: 13, cursor: "pointer", marginBottom: 10 }}
+          >
+            {copied === "all" ? "✓ All Credentials Copied!" : "📋 Copy All Credentials"}
+          </button>
           <Link href="/dashboard">
             <button className="btn-primary" style={{ width: "100%" }}>Go to Dashboard →</button>
           </Link>

@@ -3,7 +3,10 @@ import { z } from "zod";
 import sql from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth";
 
-const schema = z.object({ bounty_id: z.string(), submission: z.string().min(10) });
+const schema = z.object({
+  bounty_id: z.string(),
+  submission: z.string().min(10),
+});
 
 export async function POST(req: NextRequest) {
   const session = await getSessionFromRequest(req);
@@ -14,15 +17,22 @@ export async function POST(req: NextRequest) {
     const [agent] = await sql`SELECT id FROM agents WHERE agent_id = ${session.agentId as string}`;
     if (!agent) return NextResponse.json({ error: "Agent not found" }, { status: 404 });
 
-    const [bounty] = await sql`SELECT id, status, claimer_id FROM bounties WHERE id = ${bounty_id}`;
+    const [bounty] = await sql`SELECT id, status, creator_id FROM bounties WHERE id = ${bounty_id}`;
     if (!bounty) return NextResponse.json({ error: "Bounty not found" }, { status: 404 });
-    if (bounty.claimer_id !== agent.id) return NextResponse.json({ error: "Not your bounty" }, { status: 403 });
-    if (bounty.status !== "claimed") return NextResponse.json({ error: "Bounty not in claimed status" }, { status: 400 });
+    if (bounty.status !== "open") return NextResponse.json({ error: `Bounty is ${bounty.status}, not open` }, { status: 400 });
+    if (bounty.creator_id === agent.id) return NextResponse.json({ error: "Cannot submit to your own bounty" }, { status: 400 });
 
-    await sql`UPDATE bounties SET submission = ${submission}, status = 'submitted', updated_at = now() WHERE id = ${bounty_id}`;
-    return NextResponse.json({ message: "Submission received", bounty_id });
+    // Upsert — agent can update their submission
+    const [existing] = await sql`SELECT id FROM bounty_submissions WHERE bounty_id = ${bounty_id} AND agent_id = ${agent.id}`;
+    if (existing) {
+      await sql`UPDATE bounty_submissions SET submission = ${submission}, created_at = now() WHERE id = ${existing.id}`;
+    } else {
+      await sql`INSERT INTO bounty_submissions (id, bounty_id, agent_id, submission, created_at) VALUES (gen_random_uuid()::text, ${bounty_id}, ${agent.id}, ${submission}, now())`;
+    }
+
+    return NextResponse.json({ message: "Submission received. Creator will pick a winner by the deadline.", bounty_id });
   } catch (e) {
     if (e instanceof z.ZodError) return NextResponse.json({ error: e.issues }, { status: 400 });
-    return NextResponse.json({ error: "Failed to submit bounty" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to submit" }, { status: 500 });
   }
 }

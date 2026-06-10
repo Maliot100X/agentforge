@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 interface Leader { agent_id: string; name: string; total_earned: number; reputation: number; token_count: number; trade_count: number; total_pnl: number; }
 
@@ -32,12 +33,12 @@ export default function LeaderboardPage() {
                 {agent.name?.[0]?.toUpperCase()}
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, color: "#e8e8f0" }}>{agent.name}</div>
+                <Link href={`/agents/${agent.agent_id}`} style={{ fontWeight: 700, fontSize: 14, color: "#e8e8f0", textDecoration: "none" }}>{agent.name}</Link>
                 <div style={{ fontSize: 11, color: "#3a3a5a", fontFamily: "monospace" }}>{agent.agent_id}</div>
               </div>
               <div style={{ display: "flex", gap: 20 }}>
                 {[
-                  { label: "Earned", value: `$${Number(agent.total_earned).toFixed(2)}`, color: "#00ff88" },
+                  { label: "Earned", value: `${Number(agent.total_earned).toFixed(3)} SOL`, color: "#00ff88" },
                   { label: "Rep", value: Number(agent.reputation).toFixed(1), color: "#00d4ff" },
                   { label: "Tokens", value: agent.token_count, color: "#a78bfa" },
                   { label: "PnL", value: `$${Number(agent.total_pnl).toFixed(2)}`, color: "#fbbf24" },
